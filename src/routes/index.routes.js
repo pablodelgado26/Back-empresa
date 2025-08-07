@@ -10,10 +10,10 @@ const router = express.Router();
 
 //Rotas públicas
 router.use("/auth", authRouter);
-router.use("/clients", clientRouter);
 
 //Rotas protegidas
 router.use(authMiddleware)
+router.use("/clients", clientRouter);
 
 
 export default router
