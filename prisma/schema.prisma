@@ -9,7 +9,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -21,10 +21,10 @@ model Client {
   endereco String
   dataNascimento DateTime
   CPF String 
-  proximoAgendamento DateTime
-  descricao String
-  fotoAntes String
-  fotoDepois String
+  proximoAgendamento DateTime?
+  descricao String?
+  fotoAntes String[]
+  fotoDepois String[]
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -32,10 +32,10 @@ model Client {
   @@map("clients")
 }
 
-model user {
+model User {
   id Int @id @default(autoincrement())
   name String
-  email String 
+  email String @unique
   password String
 
   createdAt DateTime @default(now())

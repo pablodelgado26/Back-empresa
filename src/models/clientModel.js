@@ -92,8 +92,8 @@ class ClientModel {
         CPF,
         proximoAgendamento: proximoAgendamento ? new Date(proximoAgendamento) : null,
         descricao,
-        fotoAntes,
-        fotoDepois,
+        fotoAntes: fotoAntes || [],
+        fotoDepois: fotoDepois || [],
       },
     });
 
@@ -128,8 +128,8 @@ class ClientModel {
     if (CPF !== undefined) dataToUpdate.CPF = CPF;
     if (proximoAgendamento !== undefined) dataToUpdate.proximoAgendamento = proximoAgendamento ? new Date(proximoAgendamento) : null;
     if (descricao !== undefined) dataToUpdate.descricao = descricao;
-    if (fotoAntes !== undefined) dataToUpdate.fotoAntes = fotoAntes;
-    if (fotoDepois !== undefined) dataToUpdate.fotoDepois = fotoDepois;
+    if (fotoAntes !== undefined) dataToUpdate.fotoAntes = fotoAntes || [];
+    if (fotoDepois !== undefined) dataToUpdate.fotoDepois = fotoDepois || [];
 
     const clienteAtualizado = await prisma.client.update({
       where: {
