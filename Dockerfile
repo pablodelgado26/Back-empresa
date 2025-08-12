@@ -20,4 +20,4 @@ RUN npx prisma generate
 EXPOSE 3000
 
 # Inicia o servidor (ajustado para a estrutura com src)
-CMD ["node", "src/app.js"]
+CMD ["node", "server.js"]
