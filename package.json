@@ -1,11 +1,14 @@
 {
-  "name": "api-boilerplate",
+  "name": "sr-frio-api",
   "version": "1.0.0",
-  "description": "Projeto base de uma API com MVC",
+  "description": "API da empresa Sr. Frio - Sistema de gestão de clientes de refrigeração",
   "keywords": [
     "nodejs",
     "javascript",
-    "prisma"
+    "prisma",
+    "refrigeração",
+    "ar-condicionado",
+    "climatização"
   ],
   "license": "MIT",
   "author": "Pablo Delgado",
@@ -13,11 +16,8 @@
   "main": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/server.js",
-    "prisma:seed": "node prisma/seed/seed.js"
-  },
-  "prisma": {
-    "seed": "node prisma/seed/seed.js"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
   },
   "dependencies": {
     "@prisma/client": "^6.5.0",

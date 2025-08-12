@@ -1,21 +1,23 @@
-FROM node:22-alpine3.21
+# Base da imagem
+FROM node:18
 
+# Diretório de trabalho
 WORKDIR /app
 
-# Copiar e instalar dependências
+# Copia os arquivos de dependência
 COPY package*.json ./
+
+# Instala as dependências
 RUN npm install
 
-# Copiar TODOS os arquivos do projeto
+# Copia todos os arquivos do projeto
 COPY . .
 
-# Gerar cliente Prisma
+# Gera o Prisma Client
 RUN npx prisma generate
 
-# Criar diretório para SQLite e definir permissões
-RUN mkdir -p /app/data && chmod 755 /app/data
+# Expõe a porta do app
+EXPOSE 3000
 
-EXPOSE 4002
-
-# Forçar recriação do banco para resolver problemas de schema
-CMD ["sh", "-c", "rm -f /app/data/database.db && npx prisma db push && ([ -f prisma/seed.js ] && node prisma/seed.js || echo 'Seed não encontrado') && npm run start"]
+# Inicia o servidor (ajustado para a estrutura com src)
+CMD ["node", "src/app.js"]
