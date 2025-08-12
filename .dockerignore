@@ -1,69 +1,11 @@
-# Node.js
 node_modules
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Logs
-logs
-*.log
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage
-*.lcov
-
-# Dependency directories
-.npm
-.pnp
-.pnp.js
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# dotenv environment variables file (será criado no container)
-.env
-.env.test
-.env.production
-
-# Git
 .git
-.gitignore
-
-# Docker
-Dockerfile
-docker-compose.yml
-.dockerignore
-
-# IDE
-.vscode
-.idea
-
-# OS
+*.log
 .DS_Store
-Thumbs.db
-
-# Prisma
-prisma/dev.db*
-prisma/*.db-journal
-
-# Uploads (serão gerenciados por volume)
-uploads/
-
-# Documentation
-README.md
-docs/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+coverage
+.nyc_output
+!src/

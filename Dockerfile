@@ -1,34 +1,21 @@
-# Use Node.js 18 Alpine como base (mais leve)
-FROM node:18-alpine
+FROM node:22-alpine3.21
 
-# Instalar dependências do sistema necessárias para o Prisma
-RUN apk add --no-cache openssl
-
-# Criar diretório da aplicação
 WORKDIR /app
 
-# Copiar package.json e package-lock.json (se existir)
+# Copiar e instalar dependências
 COPY package*.json ./
+RUN npm install
 
-# Instalar dependências
-RUN npm ci --only=production && npm cache clean --force
-
-# Copiar o código da aplicação
+# Copiar TODOS os arquivos do projeto
 COPY . .
 
-# Gerar o Prisma Client
+# Gerar cliente Prisma
 RUN npx prisma generate
 
-# Criar usuário não-root para segurança
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nodejs -u 1001
+# Criar diretório para SQLite e definir permissões
+RUN mkdir -p /app/data && chmod 755 /app/data
 
-# Mudar ownership dos arquivos para o usuário nodejs
-RUN chown -R nodejs:nodejs /app
-USER nodejs
+EXPOSE 4002
 
-# Expor a porta da aplicação
-EXPOSE 4000
-
-# Comando para executar as migrações e iniciar a aplicação
-CMD ["sh", "-c", "npx prisma migrate deploy && node src/server.js"]
+# Forçar recriação do banco para resolver problemas de schema
+CMD ["sh", "-c", "rm -f /app/data/database.db && npx prisma db push && ([ -f prisma/seed.js ] && node prisma/seed.js || echo 'Seed não encontrado') && npm run start"]
