@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # Banco de dados PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: empresa_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: empresa_db
+      POSTGRES_USER: empresa_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sua_senha_segura}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - empresa_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U empresa_user -d empresa_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Aplicação Node.js
+  app:
+    build: .
+    container_name: empresa_app
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgresql://empresa_user:${POSTGRES_PASSWORD:-sua_senha_segura}@postgres:5432/empresa_db
+      JWT_SECRET: ${JWT_SECRET:-empresaSrFrio_super_secreto}
+    ports:
+      - "4000:4000"
+    networks:
+      - empresa_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      # Para desenvolvimento, você pode montar o código (opcional)
+      # - .:/app
+      # - /app/node_modules
+      - uploads:/app/uploads  # Para arquivos de upload (se necessário)
+
+  # Redis para cache (opcional, mas recomendado para produção)
+  redis:
+    image: redis:7-alpine
+    container_name: empresa_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - empresa_network
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
+networks:
+  empresa_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  uploads:
+    driver: local
