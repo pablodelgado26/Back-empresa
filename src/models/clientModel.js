@@ -3,11 +3,11 @@ import prisma from "../../prisma/prisma.js";
 class ClientModel {
   // Obter todos os clientes
   async findAll(name, email, cpf, pagina, limite) {
-    
-    if(Number(limite) < 1 || Number(limite) > 100) {
+
+    if (Number(limite) < 1 || Number(limite) > 100) {
       limite = 10;
     }
-    
+
     if (Number(pagina) < 1) {
       pagina = 1;
     }
@@ -89,13 +89,13 @@ class ClientModel {
         name,
         email,
         endereco,
-        dataNascimento: new Date(dataNascimento),
+        dataNascimento: new Date(dataNascimento + 'T12:00:00.000Z'), // ✅ Corrige fuso
         CPF,
-        proximoAgendamento: proximoAgendamento ? new Date(proximoAgendamento) : null,
+        proximoAgendamento: proximoAgendamento ? new Date(proximoAgendamento + 'T12:00:00.000Z') : null, // ✅ Corrige fuso
         descricao,
         fotoAntes: fotoAntes || [],
         fotoDepois: fotoDepois || [],
-        dataRegistro: new Date(dataRegistro),
+        dataRegistro: new Date(dataRegistro + 'T12:00:00.000Z'), // ✅ Corrige fuso
       },
     });
 
@@ -123,7 +123,7 @@ class ClientModel {
     }
 
     const dataToUpdate = {};
-    
+
     if (name !== undefined) dataToUpdate.name = name;
     if (email !== undefined) dataToUpdate.email = email;
     if (endereco !== undefined) dataToUpdate.endereco = endereco;
