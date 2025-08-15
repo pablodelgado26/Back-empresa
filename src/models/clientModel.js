@@ -81,7 +81,8 @@ class ClientModel {
     proximoAgendamento,
     descricao,
     fotoAntes,
-    fotoDepois
+    fotoDepois,
+    dataRegistro
   ) {
     const novoCliente = await prisma.client.create({
       data: {
@@ -94,6 +95,7 @@ class ClientModel {
         descricao,
         fotoAntes: fotoAntes || [],
         fotoDepois: fotoDepois || [],
+        dataRegistro: new Date(dataRegistro),
       },
     });
 
@@ -111,7 +113,8 @@ class ClientModel {
     proximoAgendamento,
     descricao,
     fotoAntes,
-    fotoDepois
+    fotoDepois,
+    dataRegistro
   ) {
     const cliente = await this.findById(id);
 
@@ -130,6 +133,7 @@ class ClientModel {
     if (descricao !== undefined) dataToUpdate.descricao = descricao;
     if (fotoAntes !== undefined) dataToUpdate.fotoAntes = fotoAntes || [];
     if (fotoDepois !== undefined) dataToUpdate.fotoDepois = fotoDepois || [];
+    if (dataRegistro !== undefined) dataToUpdate.dataRegistro = new Date(dataRegistro);
 
     const clienteAtualizado = await prisma.client.update({
       where: {

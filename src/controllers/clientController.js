@@ -50,12 +50,13 @@ class ClientController {
         descricao,
         fotoAntes,
         fotoDepois,
+        dataRegistro,
       } = req.body;
 
       // Verifica se todos os campos obrigatórios foram fornecidos
-      if (!name || !email || !endereco || !dataNascimento || !CPF) {
+      if (!name || !email || !endereco || !dataNascimento || !CPF || !dataRegistro) {
         return res.status(400).json({
-          error: "Os campos nome, email, endereço, data de nascimento e CPF são obrigatórios",
+          error: "Os campos nome, email, endereço, data de nascimento, CPF e data de registro são obrigatórios",
         });
       }
 
@@ -69,7 +70,8 @@ class ClientController {
         proximoAgendamento,
         descricao,
         fotoAntes,
-        fotoDepois
+        fotoDepois,
+        dataRegistro
       );
 
       if (!newClient) {
@@ -100,6 +102,7 @@ class ClientController {
         descricao,
         fotoAntes,
         fotoDepois,
+        dataRegistro,
       } = req.body;
 
       // Atualizar o Cliente
@@ -113,7 +116,8 @@ class ClientController {
         proximoAgendamento,
         descricao,
         fotoAntes,
-        fotoDepois
+        fotoDepois,
+        dataRegistro
       );
 
       if (!updatedClient) {

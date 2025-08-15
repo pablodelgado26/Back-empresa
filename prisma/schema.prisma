@@ -18,6 +18,7 @@ model Client {
   descricao          String?
   fotoAntes          String[]
   fotoDepois         String[]
+  dataRegistro       DateTime
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 
