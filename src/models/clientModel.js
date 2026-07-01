@@ -1,5 +1,22 @@
 import prisma from "../../prisma/prisma.js";
 
+const normalizeDateInput = (value, keepUndefined = true) => {
+  if (value === undefined) {
+    return keepUndefined ? undefined : null;
+  }
+
+  if (value === null || value === '') {
+    return keepUndefined ? undefined : null;
+  }
+
+  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return new Date(`${value}T12:00:00.000Z`);
+  }
+
+  const parsedDate = new Date(value);
+  return Number.isNaN(parsedDate.getTime()) ? undefined : parsedDate;
+};
+
 class ClientModel {
   // Obter todos os clientes
   async findAll(name, email, cpf, pagina, limite) {
@@ -84,18 +101,26 @@ class ClientModel {
     fotoDepois,
     dataRegistro
   ) {
+    const dataNascimentoDate = normalizeDateInput(dataNascimento, false);
+    const proximoAgendamentoDate = normalizeDateInput(proximoAgendamento, false);
+    const dataRegistroDate = normalizeDateInput(dataRegistro, false);
+
+    if (!dataNascimentoDate || !dataRegistroDate) {
+      throw new Error('Datas obrigatórias inválidas');
+    }
+
     const novoCliente = await prisma.client.create({
       data: {
         name,
         email,
         endereco,
-        dataNascimento: new Date(dataNascimento + 'T12:00:00.000Z'), // ✅ Corrige fuso
+        dataNascimento: dataNascimentoDate,
         CPF,
-        proximoAgendamento: proximoAgendamento ? new Date(proximoAgendamento + 'T12:00:00.000Z') : null, // ✅ Corrige fuso
+        proximoAgendamento: proximoAgendamentoDate || null,
         descricao,
         fotoAntes: fotoAntes || [],
         fotoDepois: fotoDepois || [],
-        dataRegistro: new Date(dataRegistro + 'T12:00:00.000Z'), // ✅ Corrige fuso
+        dataRegistro: dataRegistroDate,
       },
     });
 
@@ -124,16 +149,24 @@ class ClientModel {
 
     const dataToUpdate = {};
 
-    if (name !== undefined) dataToUpdate.name = name;
-    if (email !== undefined) dataToUpdate.email = email;
-    if (endereco !== undefined) dataToUpdate.endereco = endereco;
-    if (dataNascimento !== undefined) dataToUpdate.dataNascimento = new Date(dataNascimento);
-    if (CPF !== undefined) dataToUpdate.CPF = CPF;
-    if (proximoAgendamento !== undefined) dataToUpdate.proximoAgendamento = proximoAgendamento ? new Date(proximoAgendamento) : null;
-    if (descricao !== undefined) dataToUpdate.descricao = descricao;
-    if (fotoAntes !== undefined) dataToUpdate.fotoAntes = fotoAntes || [];
-    if (fotoDepois !== undefined) dataToUpdate.fotoDepois = fotoDepois || [];
-    if (dataRegistro !== undefined) dataToUpdate.dataRegistro = new Date(dataRegistro);
+    if (name?.trim()) dataToUpdate.name = name.trim();
+    if (email?.trim()) dataToUpdate.email = email.trim();
+    if (endereco?.trim()) dataToUpdate.endereco = endereco.trim();
+
+    const normalizedBirthDate = normalizeDateInput(dataNascimento);
+    if (normalizedBirthDate) dataToUpdate.dataNascimento = normalizedBirthDate;
+
+    if (CPF?.trim()) dataToUpdate.CPF = CPF.trim();
+
+    const normalizedAppointmentDate = normalizeDateInput(proximoAgendamento, false);
+    if (normalizedAppointmentDate !== undefined) dataToUpdate.proximoAgendamento = normalizedAppointmentDate;
+
+    if (descricao !== undefined && descricao !== null) dataToUpdate.descricao = descricao;
+    if (Array.isArray(fotoAntes)) dataToUpdate.fotoAntes = fotoAntes;
+    if (Array.isArray(fotoDepois)) dataToUpdate.fotoDepois = fotoDepois;
+
+    const normalizedRegistrationDate = normalizeDateInput(dataRegistro);
+    if (normalizedRegistrationDate) dataToUpdate.dataRegistro = normalizedRegistrationDate;
 
     const clienteAtualizado = await prisma.client.update({
       where: {

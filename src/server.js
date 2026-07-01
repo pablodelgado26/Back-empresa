@@ -11,9 +11,18 @@ const port = process.env.PORT || 4001; // Define a porta do servidor
 const app = express();
 app.use(cors()); // Habilita CORS para todas as rotas
 
-app.use(express.json()); // Parse de JSON
+app.use(express.json({ limit: '10mb' })); // Parse de JSON com limite para imagens comprimidas
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 app.use("/", router)
+
+app.use((error, req, res, next) => {
+  if (error?.type === 'entity.too.large') {
+    return res.status(413).json({ error: 'Payload muito grande. Reduza as imagens ou o tamanho da requisição.' });
+  }
+
+  return next(error);
+});
 
 
 // Iniciar o servidor
